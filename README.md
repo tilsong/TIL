@@ -3,7 +3,7 @@
 
 * 좋은 개발자가 되기 위해 하루동안 학습한 내용이나 개발관련 경험들을 기록으로 남긴다.
 
-[Namjun Kim]https://github.com/namjunemy님의 Github TIL을 보고 많은 영감을 얻었다.
+[Namjun Kim]https://github.com/namjunemy 님의 Github TIL을 보고 많은 영감을 얻었다.
 
   
 
