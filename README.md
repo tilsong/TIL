@@ -19,5 +19,5 @@
 
 ### Java
 
-* [시작](https://github.com/tilsong)
+* [* [201228 / 이것이자바다 1-2장](https://github.com/tilsong)
 
