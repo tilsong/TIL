@@ -20,4 +20,4 @@
 ### Java
 
 *  [201228 / 이것이자바다 1-2장](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter1-2.md)
-
+*  [201229 / 이것이자바다 3장](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter3.md)
