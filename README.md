@@ -21,3 +21,4 @@
 
 *  [201228 / 이것이 자바다 1-2장](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter1-2.md)
 *  [201229 / 이것이 자바다 3장 연산자](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter3.md)
+*  [201230 / 이것이 자바다 3장 조건문과 반복문](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter4.md)
