@@ -23,3 +23,4 @@
 *  [201229 / 이것이 자바다 3장 연산자](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter3.md)
 *  [201230 / 이것이 자바다 4장 조건문과 반복문](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter4.md)
 *  [210101 / 이것이 자바다 5장 참조 타입](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter5.md)
+*  [210104 / 이것이 자바다 6장 참조 타입](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter6.md)
