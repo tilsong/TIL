@@ -625,3 +625,7 @@ public @interface AnnotationName{
 ### 6.15.4 런타임 시 어노테이션 정보 사용하기
 
 - 아직 무슨 말인지 잘 모르겠음. 추후 정리하겠음.
+
+
+- 확인문제를 풀면서 알게 된 점
+  [ex20 계좌만들기](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_mySource/BankApplication.java)

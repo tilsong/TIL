@@ -68,7 +68,7 @@ public class BankApplication {
 //			int balance = accountArray[i].getBalance();
 //			System.out.println(ano +"  " + owner+ "   "+ balance);
 //		}
-//내가 가장 간과했던 것이 바로 nullpointexception이었다. null값을 이런식으로
+//내가 가장 간과했던 것이 바로 nullpointexception이었다. null값을 if(account !=null) 이런식으로
 //체크해주어야 한다는 것을 알게되었다.
 		for(int i=0; i<accountArray.length; i++) {
 			Account account = accountArray[i];
@@ -100,6 +100,11 @@ public class BankApplication {
 		}
 		deposit.setBalance(plus+deposit.getBalance());
 	}
+//nextLine과 next의 차이도 알게 되었다. 단순하게 보면 next는 띄어쓰기 단위로 문자열을 가져가고,
+//nextLine은 한 라인을 단위로 하여 문자열을 입력 받는다.
+//주의할 것은 nextLine으로 문자열을 받을 경우 엔터를 쳤을 때 엔터의 CR(캐리지리턴)과 LF(라인피드)가
+//같이 입력되기 때문에 다음의 문자열입력을 받는 열에는 다른 하나의 엔터가 입력되게 된다.
+//엔터의 이런 부분에 대하여는 "이것이자바다 4장"을 정리한 페이지에서 더 자세히 다루고 있다.
 	//출금하기
 
 	private static void withdraw() {
