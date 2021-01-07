@@ -512,3 +512,116 @@ public void setFieldNam(타입 fieldName){
 ```
 
 - 필드 타입이 boolean 일 경우에는 Getter에서 get으로 시작하지 않고 is로 시작한다. ex) isfield()
+
+
+
+## 6.15 어노테이션
+
+> 어노테이션(Annotation)은 메타데이터(metadata)이다. 메타데이터란 애플리케이션이 처리해야 할 데이터가 아니라, 컴파일 과정과 실행 과정에서 코드를 어떻게 컴파일하고 처리할 것인지를 알려주는 정보이다.
+
+- 어노테이션은 세 가지 용도로 사용된다.
+  	1. 컴파일러에게 코드 문법 에러를 체크하도록 정보를 제공
+   	2. 소프트웨어 개발 툴이 빌드나 배치 시 코드를 자동으로 생성할 수 있도록 정보를 제공
+   	3. 실행 시(런타임 시) 특정 기능을 실행하도록 정보를 제공
+
+
+
+### 6.15.1 어노테이션 타입 정의와 적용
+
+- 어노테이션 타입을 정의하는 방법은 인터페이스를 정의하는 것과 유사하다.
+
+  ```java
+  public @interface Annotation{
+  }
+  ```
+
+  - 이렇게 정의한 어노테이션은 코드에서 @AnnotationName 으로 사용될 수 있다.
+
+  
+
+- 어노테이션은 엘리먼트(element)를 멤버로 가질 수 있다.
+
+  ```java
+  public @interface AnnotationiName{
+      타입 elementName() [default 값]; //엘리먼트 선언
+  }
+  ```
+
+  - 엘리먼트 타입으로 기본 데이터 타입이나 String, 열거, class 타입과 배열 타입이 사용가능하다. 
+  - 메소드를 작성하는 것처럼 엘리먼트 이름 뒤에 ()를 붙여야 한다.
+
+  ```java
+  public @interface AnnotationName{
+      String elementName1();
+      int elementName2() default 5;
+  }
+  ```
+
+  - 이렇게 정의한 어노테이션을 코드에서 적용할 때는 다음과 같이 기술한다.
+
+  ```java
+  AnnotationName(elementName1="값", elementName2 =3);
+  //디폴드 값이 있다면 생략가능하다.
+  AnnotationName(elementName1="값");
+  ```
+
+  - 어노테이션은 기본 엘리먼트인 value를 가질 수 있다. 따라서 value 엘리먼트를 가진 어노테이션은 값만 기술될 수 있다.
+
+  ```java
+  @AnnotationName("값"); //자동으로 value 값으로 설정된다.
+  ```
+
+  - 한편 value와 다른 엘리먼트의 값을 동시에 주고 싶다면 정상적인 방법으로 지정하면 된다.
+
+  ```java
+  @AnnotationName(value ="값",elementName2 =2);
+  ```
+
+
+
+### 6.15.2 어노테이션 적용 대상
+
+- 어노테이션을 적용할 수 있는 대상은 java.lang.annotation.ElementType 열거상수 목록이다.
+- 어노테이션의 적용 대상을 지정할 때는 @Target 을 사용한다. @Target의 기본 엘리먼트인 value는 ElementType 배열을 값으로 가진다. 이것은 어노테이션이 적용될 대상을 복수 개로 지정하기 위해서이다.
+
+```java
+@Target({ElementType.TYPE, ElementType.Field, ElementType.METHOD})
+public @interface AnnotationName{
+} // 클래스와 필드, 메소드만 어노테이션을 적용할 수 있다.
+```
+
+```java
+@AnnotationName
+public class ClassName{
+    @AnnotationName
+    private String fieldName;
+    
+    //@AnnotationName -> 안됨
+    public ClassName(){}
+    
+    @AnnotationName
+    public void methodName(){}
+}
+```
+
+
+
+### 6.15.3 어노테이션 유지 정책
+
+- 사용 내용에 따라 @AnnotationName을 어느 범위까지 유지할 것인지 지정해야 한다. 
+- ex) 소스까지(SOURCE), 컴파일된 클래스까지(CLASS), 런타임 시까지(RUNTIME) // RetentionPolicy 열거상수로 정의되어 있음.
+- 리플렉션(Reflection)이란 런타임 시에 클래스의 메타 정보를 얻는 시능을 말한다.
+- 보통 어노테이션은 런타임 시점에 사용하기 위한 용도로 만들어진다.
+
+```java
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AnnotationName{
+} //런타임 유지 정책을 적용한 어노테이션
+```
+
+
+
+### 6.15.4 런타임 시 어노테이션 정보 사용하기
+
+- 아직 무슨 말인지 잘 모르겠음. 추후 정리하겠음.
