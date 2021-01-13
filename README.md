@@ -25,3 +25,4 @@
 *  [210101 / 이것이 자바다 5장 참조 타입](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter5.md)
 *  [210104 / 이것이 자바다 6장 클래스](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter6.md)
 *  [210107 / 이것이 자바다 7장 상속](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter7.md)
+*  [210113 / 이것이 자바다 8장 인터페이스](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter8.md)
