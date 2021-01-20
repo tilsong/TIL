@@ -27,3 +27,7 @@
 *  [210107 / 이것이 자바다 7장 상속](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter7.md)
 *  [210113 / 이것이 자바다 8장 인터페이스](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter8.md)
 *  [210120 / 이것이 자바다 9장 중첩 클래스와 중첩 인터페이스](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter9.md)
+
+
+### Algorithm
+*  [210119 / 0119 프로그래머스 lv1 같은 숫자는 싫어](https://github.com/tilsong/TIL/blob/main/algorithm/practice/0119%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4%20%20lv1%20%EA%B0%99%EC%9D%80%20%EC%88%AB%EC%9E%90%EB%8A%94%20%EC%8B%AB%EC%96%B4.md)
