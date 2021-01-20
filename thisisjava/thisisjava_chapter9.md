@@ -185,7 +185,8 @@ public class A{
     	//method1();     인스턴스 필드와 메소드에는 접근할 수 없다.
 
     	field2=10;
-		method2();}
+		method2();
+    }
 }
 ```
 
@@ -273,7 +274,7 @@ public class ButtonEx{
 
 > 익명 객체는 이름이 없는 객체를 말한다. 
 >
-> 익명 객체는 단독으로 생성할 수 없고 클래스를 상속하거나 인터페이스를 구현해야만 생성할 수 있다.
+> 익명 객체는 단독으로 생성할 수 없고 **클래스를 상속하거나 인터페이스를 구현해야만 생성**할 수 있다.
 >
 > 익명 객체는 **필드의 초기값**이나 **로컬 변수의 초기값, 매개 변수의 매개값**으로 주로 대입된다.
 >
@@ -283,15 +284,284 @@ public class ButtonEx{
 
 ### 9.5.1 익명 자식 객체 생성
 
+- 부모 타입으로 필드나 변수를 선언하고, 자식 객체를 초기값으로 대입할 경우, 다음과 같이 사용하게 된다.
 
+```JAVA
+class Child extends Parent {}
+
+class A {
+    Parent field = new Child(); // 필드에 자식 객체를 대입
+    void method(){
+        Parent localVar = new Child(); // 로컬 변수에 자식 객체를 대입
+    }
+}
+```
+
+- 그러나 **자식 클래스가 재사용되지 않고, 오로지 해당 필드와 변수의 초기값으로만 사용할 경우**라면 익명 자식 객체를 생성해서 초기값으로 대입하는 것이 좋은 방법이다. 
+
+```java
+부모클래스[필드:변수] = new 부모클래스(매개값, ...){
+    //필드
+    //메소드
+}; //세미콜론 붙여야함
+```
+
+- 중괄호 내부에는 필드나 메소드를 선언하거나 부모 클래스의 메소드를 재정의하는 내용이 들어가는데, 일반 클래스와는 달리 생성자를 선언할 수 없다.
+
+- 필드를 선언할 때 사용하는 법
+
+```java
+class A {
+    Parent field = new Parent() {
+        int childField;
+        void childMethod(){}
+        
+        @Override //parent 메소드 재정의
+        void parentMethod(){}
+    };
+}
+```
+
+- 메소드 로컬 변수의 초기값으로 들어가는 모습
+
+```java
+class A {
+    void method(){
+        Parent localVar = new Parent(){
+            int childField;
+            void childMethod(){}
+            @Override
+            void parentMethod(){}
+        };
+    }
+}
+```
+
+- 메소드의 매개 변수가 부모 타입일 경우 익명 자식 객체를 생성해서 매개값으로 대입할 수 있다.
+
+```java
+class A {
+    void method1(Parent parent){}
+    
+    void method2(){
+        method1(			//method1을 호출하면서, 매개값으로 익명 객체를 사용했다.
+        	new Parent(){
+                int childField;
+                void childMethod(){}
+                @Override
+                void parentMethod(){}
+            };
+        )
+    }
+}
+```
+
+- 익명 자식 객체에 **새롭게 정의된 필드와 메소드는** **익명 자식 객체 내부에서만 사용**되고, 외부에서는 필드와 메소드에 접근할 수 없다. 왜냐하면 **익명 자식 객체는 부모 타입 변수에 대입되므로 부모 타입에 선언된 것만 사용할 수 있기 때문**이다.
+- 그러나 **재정의 한 것은 사용**할 수 있다.
+
+```java
+class A {
+    Parent field = new Parent(){
+        int childField;
+        void childMethod(){}
+        @Override
+        void parentMethod(){
+            childField =3;
+            childMethod();
+        }
+    };
+    
+    void method(){
+        //field.childField =3;
+        //field.childMethod(); //부모 타입 내용이므로 사용할 수 없다.
+        field.parentMethod();// 재정의했기 때문에 사용가능
+        
+    }
+}
+```
+
+- 결론적으로 **부모 타입의 필드와 메소드의 로컬 변수, 메소드의 매개 변수**로 들어가는 것을 볼 수 있다.
 
 
 
 ### 9.5.2 익명 구현 객체 생성
+
+- 구현 -> 인터페이스 관련!
+- 인터페이스 타입으로 필드나 변수를 선언하고, 구현 객체를 초기값으로 대입하는 경우는 다음과 같다,
+
+```java
+class TV implements RemoteControl{}
+
+class A{
+    RemoteControl field = new TV();// 인터페이스에 필요한 구현 객체를 생성하여 대입
+    void method(){
+        RemoteControl localVar = new TV(); // 로컬 변수에 구현 객체를 대입
+    }
+}
+```
+
+- 그러나 **구현 클래스가 재사용되지 않고, 오로지 해당 필드와 변수의 초기값으로만 사용하는 경우라면 익명 구현 객체를 초기값으로 대입하는 것이 좋다.**
+
+```JAVA
+인터페이스 [필드:변수] = new 인터페이스() {
+    //인터페이스에 선언된 추상 메소드의 실체 메소드 선언
+    //필드
+    //메소드
+}; //중괄호에는 인터페이스에 선언된 모든 추상 메소드들의 실체 메소드를 작성해야 한다.
+```
+
+- 추가적인 필드와 메소드는 선언은 가능하나 실체 메소드에서만 사용이 가능하고 외부에서는 사용하지 못한다.
+- 필드로 익명 구현 객체 생성한 모습
+
+```java
+class A{
+    RemoteControl field = new RemoteControl(){
+        @Override
+        void turnOn{} //추상메소드에 대한 실체 메소드
+    }
+}
+```
+
+- 메소드 내에 로컬 변수를 선언할 때 초기값으로 익명 구현 객체를 생성해서 대입하는 모습
+
+```java
+void method(){
+    RemoteControl localVar = new RemoteControl(){
+        @Override
+        void turnOn(){} //추상 메소드에 대한 실체 메소드
+    };
+}
+```
+
+- 매개 값으로 사용하는 모습
+
+```java
+class A {
+    void method1(RemoteControl rc){} 
+    
+    void method2(){
+        method1(
+            new RemoteControl(){
+                @Override
+                void turnOn(){}
+            }
+        ); //메소드 안에 익명 구현 객체가 선언되면 해당 메소드의 )에 ;를 쓴다.
+    }
+}
+```
+
+
+
+- 예제 : UI에서 사용되는 버튼의 클릭 이벤트 처리
+
+```java
+//UI 클래스
+public class Button{
+    onClickListener listener; //인터페이스 타입 필드
+    
+    void setOnClickListener(OnClickListener listener){
+        this.listener = listener;		//매개 변수의 다형성
+    }
+    
+    void touch(){ // 구현 객체의 onclick 메소드 호출
+        listener.onClick();
+    }
+    
+    interface OnClickListener { //중첩 인터페이스
+        void onClick();
+    }
+}
+```
+
+```java
+public class Window {
+    Button button1 = new Button();
+    Button button2 = new Button();
+    
+    //필드 초기값으로 대입
+    Button.OnClickListener listener = new Button.OnClickListener() {
+        @Override
+        public void onClick(){
+            System.out.println("전화를 겁니다.");
+        }
+    };
+    
+    Window(){
+        button1.setOnClickListener(lisetener); //매개값으로 위 필드 대입
+        button2.setOnClickListener(new Button.OnClickListener() {//매개값으로 익명 구현 객체 대입
+            @Override
+            public void onClick(){
+                System.out.println("메시지를 보냅니다.");
+            }
+        });
+    }
+}
+```
+
+```java
+//실행 클래스
+public class Main{
+    public static void main(String[]args){
+        Window w = new Window();
+        w.button1.touch();
+        w.button2.touch();
+    }
+}
+```
+
+- 너무 어렵당
 
 
 
 
 
 ### 9.5.3 익명 객체의 로컬 변수 사용
+
+- 로컬 클래스와 거의 같은 내용을 담고 있다.
+- 메소드의 매개 변수나 로컬 변수를 익명 객체에서 사용할 때, 메소드가 끝나면 스택 메모리에서 매개변수와 로컬 변수가 사라지므로 익명 객체에서 사용할 수 없게 된다. 그래서 자바는 매개 변수와 로컬 변수를 익명 클래스에 final로 복사한다.
+- 익명 객체가 로컬 변수로 있는 메소드 {} 안은 익명 객체 로컬 변수 {} 안이 아니더라도 final로 적용이 된다.
+
+```java
+public interface Calculatable{
+    public int sum();
+}
+```
+
+```java
+public class Anonymous{
+    private int field;
+    
+    public void method(final int arg1, int arg2){
+        final int var1=0;
+        int var2 =0;
+        
+        field =10; //바깥 클래스 내용은 제한 없이 사용
+        
+        //arg1 =10;
+        //arg2 =10;
+        //var1=10;
+        //var2=10; final이므로 수정 불가
+        
+        Calculatable calc = new Calculatable(){
+            @Override
+            publi cint sum(){
+                int result = field + arg1 +arg2 + var1 + var2;
+                return result;
+            }
+        };
+        System.out.println(calc.sum);
+    }
+}
+```
+
+```java
+public class AnonymousEx{
+    public static void main(String[]args){
+        Anonymous anony = new Anonymous();
+        anony.method(0,0);
+    }
+} //실행 결과 : 10
+```
+
+
 
