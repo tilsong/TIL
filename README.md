@@ -30,4 +30,4 @@
 
 
 ### Algorithm
-*  [210119 / 0119 프로그래머스 lv1 같은 숫자는 싫어](https://github.com/tilsong/TIL/blob/main/algorithm/practice/0119%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4%20%20lv1%20%EA%B0%99%EC%9D%80%20%EC%88%AB%EC%9E%90%EB%8A%94%20%EC%8B%AB%EC%96%B4.md)
+*  [210119 / 프로그래머스 lv1 같은 숫자는 싫어](hthttps://github.com/tilsong/TIL/blob/main/algorithm/practice/0119%20프로그래머스%20lv1%20같은%20숫자는%20싫어.md)
