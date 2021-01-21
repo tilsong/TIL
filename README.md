@@ -26,7 +26,7 @@
 *  [210107 / 이것이 자바다 7장 상속](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter7.md)
 *  [210113 / 이것이 자바다 8장 인터페이스](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter8.md)
 *  [210120 / 이것이 자바다 9장 중첩 클래스와 중첩 인터페이스](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter9.md)
-
+*  [210121 / 이것이 자바다 10장 예외 처리](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter10.md)
 
 ### Algorithm
 *  [210119 / 프로그래머스 lv1 같은 숫자는 싫어](https://github.com/tilsong/TIL/blob/main/algorithm/practice/프로그래머스%20lv1%20같은%20숫자는%20싫어.md)
