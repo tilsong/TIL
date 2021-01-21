@@ -29,4 +29,4 @@
 *  [210121 / 이것이 자바다 10장 예외 처리](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter10.md)
 
 ### Algorithm
-*  [210119 / 프로그래머스 lv1 같은 숫자는 싫어](https://github.com/tilsong/TIL/blob/main/algorithm/practice/프로그래머스%20lv1%20같은%20숫자는%20싫어.md)
+*  [210119 / 프로그래머스 lv1 같은 숫자는 싫어](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20Non-contiguous%20number.md)
