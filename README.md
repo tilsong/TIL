@@ -28,8 +28,9 @@
 *  [210120 / 이것이 자바다 9장 중첩 클래스와 중첩 인터페이스](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter9.md)
 *  [210121 / 이것이 자바다 10장 예외 처리](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter10.md)
 *  [210122 / 이것이 자바다 12장 멀티 스레드](https://github.com/tilsong/TIL/blob/main/thisisjava/thisisjava_chapter12.md)
-### Algorithm
+
+### Algorithm Practice
 *  [210119 / 프로그래머스 lv1 같은 숫자는 싫어](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20Non-contiguous%20number.md)
 *  [210121 / 프로그래머스 lv1 모의고사](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20test.md)
 *  [210121 / 프로그래머스 lv1 문자열 다루기 기본](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20String%20Control.md)
-*  [210124 / 프로그래머스 lv1 나누어 떨어지는 숫자 배열](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20String%20Control.md)
+*  [210124 / 프로그래머스 lv1 나누어 떨어지는 숫자 배열](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20Divide%20Number%20Array.md)
