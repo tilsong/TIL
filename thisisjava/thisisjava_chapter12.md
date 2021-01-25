@@ -716,41 +716,432 @@ public class PrintThread3 extends Thread{
 
 ## 12.7 데몬 스레드
 
+> 데몬(Daemon) 스레드는 주 스레드의 작업을 돕는 보조적인 역할을 수행하는 스레드이다. 주 스레드가 종료되면 데몬 스레드는 강제적으로 종료되는데, 그 이유는 주 스레드의 보조 역할을 수행하므로 주 스레드가 종료되면 데몬 스레드의 존재 의미가 없어지기 때문이다. 이 점을 제외하면 데몬 스레드는 일반 스레드와 큰 차이가 없다. ex) 워드의 자동저장 기능, JVM의 가비지 콜렉터
+
+- 스레드를 데몬으로 만들기 위해서는 주 스레드가 데몬이 될 스레드의 **setDaemon(true)**를 호출해주면 된다. 주의할 점은 start() 메소드가 호출되고 나서 setDaemon(true)를 호출하면 IllegalThreadStateException이 발생하므로 start() 호출 전에 **setDaemon(true)를 호출해야 한다.**
+- 현재 실행 중인 스레드가 데몬 스레드인지 isDaemon() 메소드를 통해 구별할 수 있다. 맞으면 true를 리턴한다.
+
 
 
 ## 12.8 스레드 그룹
 
+> **스레드 그룹(ThreadGroup)**은 관련된 스레드를 묶어서 관리할 목적으로 이용된다.  JVM이 실행되면 system 스레드 그룹을 만들고, JVM 운영에 필요한 스레드들을 생성해서 system 스레드 그룹에 포함시킨다. 그리고 system의 하위 스레드 그룹으로 main을 만들고 메인 스레드를 main 스레드 그룹에 포함시킨다. 
 
+- 스레드는 반드시 하나의 스레드 그룹에 포함되는데, 명시하지 않으면 기본적으로 자신을 생성한 스레드와 같은 스레드 그룹에 속하게 된다. 보통 main 스레드가 작업 스레드를 생성하므로 기본적으로 main 스레드 그룹에 속하게 된다.
 
 ### 12.8.1 스레드 그룹 이름 얻기
+
+- 현재 스레드에 속한 스레드 그룹의 이름을 얻고 싶다면 다음과 같은 코드를 사용할 수 있다.
+
+  ```java
+  TreadGroup group = Thread.currentThread().getThreadGroup();
+  String groupName = group.getName();
+  
+  //프로세스 내의 실행하는 모든 스레드에 대한 정보 얻기
+  //Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();
+  //키는 스레드 객체, 값은 스레드의 상태 기록들
+  //for문을 사용하여 출력해 볼 수 있다.
+  ```
 
 
 
 ### 12.8.2 스레드 그룹 생성
 
+- 명시적으로 스레드 그룹을 만들고 싶다면 다음 생성자 중 하나를 이용해서 ThreadGroup 객체를 만들면 된다.
+
+```java
+ThreadGroup tg = new ThreadGroup(String name);//그룹 이름만, 현재 스레드가 속한 그룹의 하위 그룹으로 생성
+ThreadGroup tg = new ThreadGroup(ThreadGroup parent, String name);//부모 그룹과 이름, 부모 그룹에 하위 그룹으로 생성
+```
+
+- 새로운 스레드 그룹을 생성한 후, 이 그룹에 스레드를 포함시키려면  Thread  객체를 생성할 때 생성자 매개값으로 스레드 그룹을 지정하면 된다. 다음 네 가지가 있다.
+
+```java
+Thread t = new Thread(ThreadGroup group, Runnable target);
+Thread t = new Thread(ThreadGroup group, Runnable target, String name);
+Thread t = new Thread(ThreadGroup group, Runnable target, String name, long stackSize);
+Thread t = new Thread(ThreadGroup group, String name); //Thread클래스의 하위 클래스로 생성
+//target은 Runnable 구현 객체, name은 스레드의 이름, stackSize는 JVM이 이 스레드에 할당할 Stack 크기
+```
+
 
 
 ### 12.8.3 스레드 그룹의 일괄 interrupt()
 
+- 스레드를 스레드 그룹에 포함시키면 어떤 이점이 있을까? 바로 **interrupt() 메소드를 이용해서 그룹 내의 모든 스레드들을 일괄 interrupt할 수 있다는 것**이다. 스레드 그룹의 interrupt() 메소드는 포함된 모든 스레드의 interrupt() 메소드를 내부적으로 호출해주기 때문이다.
+- 그러나 스레드 그룹의 interrupt() 메소드는 소속된 스레드의 interrupt() 메소드를 호출만 할 뿐 개별 스레드에서 발생하는 InterruptException에 대한 예외 처리를 하지 않으므로 안전한 종료를 위해서는 개별 스레드가 예외 처리를 해야한다.
+
+| 메소드                         | 설명                                                         |
+| ------------------------------ | ------------------------------------------------------------ |
+| int activeCount                | 현재 그룹 및 하위 그룹에서 활동 중인 모든 스레드의 수를 리턴한다. |
+| int activeGroupCount()         | 현재 그룹에서 활동 중인 모든 하위 그룹의 수를 리턴한다.      |
+| void checkAccess()             | 현재 스레드가 스레드 그룹을 변경할 권한이 있는지 체크한다. 만약 권한이 없으면 SecurityException 을 발생시킨다. |
+| void destroy()                 | 현재 그룹 및 하위 그룹을 모두 삭제한다. 단, 그룹 내에 포함된 모든 스레드들이 종료 상태가 되어야 한다. |
+| boolean isDestroyed()          | 현재 그룹이 삭제되었는지 여부를 리턴한다.                    |
+| int getMaxPriority()           | 현재 그룹에 포함된 스레드가 가질 수 있는 최대 우선순위를 리턴한다. |
+| void setMaxPriority(int pri)   | 현재 그룹에 포함된 스레드가 가질 수 있는 최대 우선순위를 설정한다. |
+| String getName()               | 현재 그룹의 이름을 리턴한다.                                 |
+| ThreadGroup getParent()        | 현재 그룹의 부모 그룹을 리턴한다.                            |
+| boolean parenOf(ThreadGroup g) | 현재 그룹이 매개값으로 지정한 스레드 그룹의 부모인지 여부를 리턴한다. |
+| boolean isDaemon()             | 현재 그룹이 데몬 그룹인지 여부를 리턴한다.                   |
+| void setDaemon(boolean daemon) | 현재 그룹을 데몬 그룹으로 설정한다.                          |
+| void list()                    | 현재 그룹에 포함된 스레드와 하위 그룹에 대한 정보를 출력한다. |
+| void interrupt()               | 현재 그룹에 포함된 모든 스레드들을  interrupt한다.           |
 
 
-## 12.9 스레드풀
 
+## **12.9 스레드풀**
 
+> 병렬 작업 처리가 많아지면 스레드 개수가 증가되고 그에 따른 스레드 생성과 스케줄링으로 인해 CPU가 바빠져 메모리 사용량이 늘어나 애플리케이션의 성능이 저하된다. 갑작스런 병렬 작업의 폭증으로 인한 스레드의 폭증을 막으려면 스레드풀(ThreadPool)을 사용해야 한다.스레드풀은 작업 처리에 사용되는 스레드를 제한된 개수만큼 정해 놓고 작업 큐(Queue)에 들어오는 작업들을 하나씩 스레드가 맡아 처리한다. 작업 처리가 끝난 스레드는 다시 작업큐에서 새로운 작업을 가져와 처리한다. 그렇기 대문에 작업 처리 요청이 폭증되어도 스레드의 전체 개수가 늘어나지 않으므로 애플리케이션의 성능이 급격히 저하되지 않는다.
 
-### 12.9.1 스레드풀 생성 및 종료
+![https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Thread_pool.svg/400px-Thread_pool.svg.png](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Thread_pool.svg/400px-Thread_pool.svg.png)
 
+출처: 위키백과, https://en.wikipedia.org/wiki/Thread_pool
 
+- java.util.concurrent 패키지에서는 **ExecutorService 인터페이스와 Executors 클래스**를 제공한다. Executor의 다양한 정적 메소드를 이용해서 **ExecutorService 구현 객체**를 만들 수 있는데, 이것이 바로 스레드풀이다.
 
-### 12.9.2 작업 생성과 처리 요청
+### **12.9.1 스레드풀 생성 및 종료**
 
+- **스레드풀 생성** : ExecutorService 구현 객체는 Executors 클래스의 두 메소드 중 하나를 이용해서 생성할 수 있다.
 
+- **초기 스레드 수**는 ExecutorService 객체가 생성될 때 기본적으로 생성되는 스레드 수를 말하고, **코어 스레드 수**는 스레드 수가 증가된 후 사용되지 않는 스레드를 스레드풀에서 제거할 때 최소한 유지해야 할 스레드 수를 말한다. **최대 스레드 수**는 스레드풀에서 관리하는 최대 스레드 수이다.
 
-### 12.9.3 블로킹 방식의 작업 완료 통보
+- newCachedThreadPool()는 스레드 객수보다 작업 개수가 많으면 새 스레드를 생성시켜 작업을 처리한다. 운영체제의 성능과 상황에 따라 스레드 개수가 달라질 수 있다. 1개 이상의 스레드가 추가되었을 경우 60초 동안 추가된 스레드가 아무 작업을 하지 않으면 추가된 스레드를 종료하고 풀에서 제거한다.
 
+  ```java
+  ExecutorService executorServie = new Executors.newCachedThreadPool();//호출 후 구현객체 얻음
+  ```
 
+- newFixedThreadPool(int nThreads) 는 스레드 개수보다 작업 개수가 많으면 새 스레드를 생성시키고 작업을 처리한다. 스레드가 작업을 처리하지 않고 놀고 있더라도 스레드 개수가 줄지 않는다.
 
-### 12.9.4 콜백 방식의 작업 완료 통보
+  ```java
+  ExecutorService executorService = Executors.newFixedThreadPool( //CPU코어의 수만큼 최대 스레드를 사용하는 스레드풀 생성
+      Runtime.getRuntime().availableProcessors()  
+  );
+  ```
 
+- 위 두 메소드를 사용하지 않고 코어 스레드 개수와 최대 스레드 개수를 설정하고 싶다면 직접 ThreadPoolExecutor 객체를 생성할 수도 있다. 사실 위 두 가지 메소드도 내부적으로 ThreadPoolExecutor 객체를 생성해서 리턴한다.
 
+  ```java
+  ExecutorService threadPool = new ThreadPoolExecutor (
+      3,   //코어 스레드 개수
+      100, //최대 스레드 개수
+      120L,//놀고 있는 시간
+      TimeUnit.SECONDS, //놀고 있는 시간 단위
+      new SynchronousQueue<Runnable>() //작업 큐
+  );
+  ```
 
+- 스레드풀 종료
+
+> 스레드풀의 스레드는 기본적으로 데몬 스레드가 아니기 때문에 main 스레드가 종료되더라도 작업을 처리하기 위해 계속 실행 상태로 남아있다. 애플리케이션을 종료하려면 스레드풀을 종료시켜 스레드들이 종료 상태가 되도록 처리해주어야 한다.
+>
+> 남아있는 작업을 마무리하고 스레드풀을 종료할 때에는 shutdown()을 일반적으로 호출하고, 남아있는 작업과는 상관없이 종료할 때에는 shutdownNow()를 호출한다.
+
+### **12.9.2 작업 생성과 처리 요청**
+
+- **작업 생성** : Runnable 또는 Callable 구현 클래스로 표현한다. 리턴값의 유무 차이가 있다. 스레드풀의 스레드는 작업 큐에서 Runnable 또는 Callable 객체를 가져와 run()과 call()메소드를 실행한다.
+
+```java
+//Runnable 구현 클래스
+Runnable task = new Runnable(){
+    @Override
+    public void run(){
+        /스레드가 처리할 작업 내용
+    }// 리턴값 없음
+}
+//Callable 구현 클래스
+Callable<T> task = new Callable<T>(){
+    @Override
+    public T call() throws Exception{
+        //스레드가 처리할 작업 내용
+        return T;   //implements Callable<T>에서 지정한 T타입 리턴
+    }
+}
+```
+
+- **작업 처리 요청** : ExecutorService의 작업 큐에 Runnable 또는 Callable 객체를 넣는 행위를 말한다.
+
+- execute()와 submit() 메소드의 차이점은 리턴 타입 유무 외에 하나가 더 있다. execute()는 작업 처리 도중 예외가 발생하면 스레드가 종료되고 해당 스레드는 스레드풀에서 제거된다. 따라서 스레드풀은 다른 작업 처리를 위해 새로운 스레드를 생성한다. 반면에 submit()은 작업 처리 도중 예외가 발생하더라도 스레드는 종료되지 않고 다음 작업을 위해 재사용된다. 그렇기 대문에 가급적이면 스레드의 생성 오버헤더를 줄이기 위해 submit()을 사용하는 것이 좋다.
+- 예제 : execute() 메소드로 작업 처리 요청한 경우
+
+```java
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
+public class ExecuteEx {
+
+    public static void main(String[] args) throws Exception {
+        //최대 스레드 수가 2개인 스레드풀 생성
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        
+        for(int i=0; i<10; i++) {   //작업 정의
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    //스레드의 총 개수 및 작업 스레드 이름 출력
+                    ThreadPoolExecutor threadPoolExecutor = 
+                            (ThreadPoolExecutor) executorService;
+                    int poolSize = threadPoolExecutor.getPoolSize();
+                    String threadName = Thread.currentThread().getName();
+                    System.out.println("[총 스레드 개수: " + poolSize +
+                            "] 작업 스레드 이름" + threadName);
+                    //예외 발생시킴
+                    int value = Integer.parseInt("삼");
+                }
+            };
+            executorService.execute(runnable); //작업 처리 요청
+            //executorService.submit(runnable);
+            
+            Thread.sleep(10);
+        }
+    
+        executorService.shutdown();
+    }
+}
+//실행하면 예외로 인해 반복할 때 마다 스레드를 종료하고 새로운 스레드를 계속해서 생성한다.
+//submit 메소드를 사용하면 예외가 발생해도 스레드가 종료되지 않고 계속 재사용되어 다른 작업을 처리한다.
+```
+
+### **12.9.3 블로킹 방식의 작업 완료 통보**
+
+> ExecutorService의 submit()메소드는 매개값으로 준 Runnable 또는 Callable 작업을 스레드풀의 작업 큐에 저장하고 즉시 Future 객체를 리턴한다.
+>
+> Future 객체는 작업이 완료될 때까지 기다렸다가(지연, 블로킹) 최종 결과를 얻는데 사용된다. 그래서 Future를 지연완료(pending completion) 객체라고 한다. Future의 get() 메소드를 호출하면 스레드가 작업을 완료할 때까지 블로킹되었다가 작업을 완료하면 처리결과를 리턴한다.
+
+- submit의 세 메소드 별로 Futer의 get 메소드가 리턴하는 값
+
+- Future을 이용한 블로킹 방식의 작업 완료 통보에서 주의할 점은 작업을 처리하는 스레드가 작업을 완료하기 전가지는 get() 메소드가 블로킹되므로 다른 코드를 실행할 수 없다는 것이다. 따라서 get()메소드를 호출하는 스레드는 새로운 스레드이거나 스레드풀의 또 다른 스레드가 되어야 한다.
+
+```java
+//새로운 스레드를 생성해서 호출
+new Thread(new Runnable() {
+    @Override
+    public void run(){
+        try{
+            future.get();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+} ).start();
+//스레드풀의 스레드가 호출
+executorService.submit(new Runnable(){
+    @Override
+    public void run(){
+        try{
+            future.get();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+});
+```
+
+- **리턴값이 없는** **작업 완료 통보**
+
+  - Runnable 객체로 생성하고, submit(Runnable task) 메소드를 이용하여 작업 처리 요청을 하면 된다.
+
+  ```java
+  Runnable task = new Runnable() {
+      @Override
+      public void run(){
+          //스레드 처리 내용
+      }
+  }
+  ```
+
+  - 결과값이 없음에도 Future객체를 리턴하는데, 이는 스레드가 정상처리 되었는지, 아니면 예외가 발생했는지 확인하기 위해서이다.
+
+    ```java
+    Future future = executorService.submit(task); //결과 없는 작업 처리 요청
+    ```
+
+  - 정상처리되었다면 Future의 get() 메소드는 null을 리턴하고, interrupt되면 InterruptedExcetion이 발생되고, 다른 예외가 발생하면 ExecutionException이 발생한다. 따라서 위 두 예외를 처리할 코드를 작성해야 한다.
+
+  ```java
+  try{
+      future.get();
+  } catch ( InterruptedExcetion e) {}
+  catch (ExecutionException e) {}
+  ```
+
+- **리턴값이 있는** **작업 완료 통보**
+
+  - 처리결과를 얻기 위해 작업 객체를 Callable로 생성할 수 있다.
+
+  ```java
+  Callable<T> task = new Callable<T>(){
+      @Override
+      public T call() throws Exception{
+          //스레드 처리 내용
+          return T;//제네릭 타입 파라미터 T
+      }
+  };
+  ```
+
+  - 작업 처리 요청
+
+  ```java
+  Future<T> future = executorService.submit(task); //Future<T>를 리턴하는 작업 처리 요청
+  ```
+
+  - 예외 처리
+
+  ```java
+  try{
+      Result T = future.get();
+  } catch ( InterruptedExcetion e) {}
+  catch (ExecutionException e) {}
+  ```
+
+- **작업 처리 결과를 외부 객체에 저장**
+
+  - 스레드가 작업한 결과를 외부 결과에 저장해야할 때, 대개 공유 객체에 저장하는데, 이는 두 개 이상의 스레드 작업을 취합할 목적으로 이용된다.
+  - ExecutorService의 submit(Runnable task, V result) 메소드를 사용할 수 있다. 메소드 호출하면 즉시 Future<V>가 리턴되는데, get()을 호출하여 블로킹하고 작업 완료시 V타입 객체를 리턴한다. 리턴된 객체는 V result인데, 차이점은 스레드 처리 결과가 내부에 저장되어 있다는 것이다.
+  - 작업 객체는 Runnable 구현 클래스로 생성하는데, 주의할 점은 스레드에서 결과를 저장하기 위해 외부 Result 객체를 사용해야 하므로 생성자를 통해 Result 객체를 주입받아야 한다.
+
+- 예제 : 작업 처리 결과를 외부 객체에 저장
+
+```java
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class ResultByRunnableEx {
+
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(
+                Runtime.getRuntime().availableProcessors()
+        );//스레드풀 생성
+        
+        System.out.println("[작업 처리 요청]");
+        class Task implements Runnable {
+            Result result;
+            Task(Result result){    //외부 객체를 Task에 저장
+                this.result = result;
+            }
+            @Override
+            public void run() {
+                int sum =0;
+                for(int i=1; i<=10; i++) {
+                    sum+= i;
+                }
+                result.addValue(sum);//공유 객체의 메소드
+            }
+            
+        }
+
+        
+        Result result = new Result();//공유 객체 생성
+        Runnable task1 = new Task(result);//공유 객체 대입
+        Runnable task2 = new Task(result);
+        Future<Result> future1 = executorService.submit(task1, result);// 두 가지 작업 처리 요청
+        Future<Result> future2 = executorService.submit(task2, result);
+    
+    
+    try {
+        result = future1.get();//두 가지 작업 결과를 취합
+        result = future2.get();
+        System.out.println("[처리결과] "+result.accumValue);
+        System.out.println("[작업처리 완료]");
+    } catch(Exception e) {
+        e.printStackTrace();
+        System.out.println("[실행예외 발생함] " + e.getMessage());
+    }
+    
+    executorService.shutdown();
+    
+    }
+}
+class Result{//처리 결과 저장하는 Result클래스
+    int accumValue;
+    synchronized void addValue(int value){//공유 외부 객체
+        accumValue += value;
+    }
+}
+```
+
+- **작업 완료 순으로 통보**
+
+  - 작업 처리나 처리 결과를 순차적으로 이용할 필요가 없다면 CompletionService를 사용하여 작업 처리가 완료된 것부터 결과를 얻어 이용할 수 있다. CompletionService는 poll()과 take() 메소드를 사용할 수 있다.
+  - CompletionService 구현 클래스는 ExecutorCompletionService<V>이다. 객체를 생성할 때 생성자 매개값으로 CompletionService를 제공하면 된다.
+
+  ```java
+  ExecutorService executorService = Executors.newFixedThreadPool(
+      Runtime.getRuntime().availableProcessors()
+  );
+  CompletionService<V> completionService = new ExecutorCompletionService<V>(
+      executorService
+  );
+  ```
+
+  - poll()과 take()메소드를 이용해서 처리완료된 작업의 Future을 얻으려면 CompletionService의 submit()메소드로 작업 처리 요청을 해야한다.
+
+  ```java
+  completionService.submit(Callable<V> task)
+  completionService.submit(Runnable task, V result)
+  ```
+
+  - 예제 : 작업 완료 순으로 통보 받기
+
+  ```java
+  import java.util.concurrent.Callable;
+  import java.util.concurrent.CompletionService;
+  import java.util.concurrent.ExecutorCompletionService;
+  import java.util.concurrent.ExecutorService;
+  import java.util.concurrent.Executors;
+  import java.util.concurrent.Future;
+  
+  public class CompletionServiceEx extends Thread{
+  
+      public static void main(String[] args) {
+          //스레드풀 생성
+          ExecutorService executorService = Executors.newFixedThreadPool(
+              Runtime.getRuntime().availableProcessors()
+          );
+                  
+          //구현 클래스 생성
+          CompletionService<Integer> completionService =
+                  new ExecutorCompletionService<Integer>(executorService);
+          
+          System.out.println("작업 처리 요청");
+          for(int i =0; i<3; i++) {//작업 처리 요청
+              completionService.submit(new Callable<Integer>() {
+                  @Override
+                  public Integer call() throws Exception{
+                      int sum = 0;
+                      for(int i =1; i<=10; i++){
+                          sum+=i;
+                      }
+                      return sum;
+                  }
+              });
+          }
+  
+      System.out.println("처리 완료된 작업 확인");
+      executorService.submit(new Runnable(){
+          @Override
+          public void run () {
+              while(true) {
+                  try { //완료된 작업 가져오기
+                      Future<Integer> future = completionService.take();
+                      int value = future.get();
+                      System.out.println("처리 결과: " + value);
+                  } catch(Exception e) {
+                      break;
+                  }
+              }
+          }
+      });
+      
+      try{Thread.sleep(3000);}
+      catch(InterruptedException e) {}
+      executorService.shutdownNow();
+      }
+  }
+  ```
+
+  12.9.4 콜백 방식의 작업 완료 통보(생략)
