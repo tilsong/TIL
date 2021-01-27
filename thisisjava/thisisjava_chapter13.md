@@ -2,8 +2,6 @@
 >
 > 책을 보면서 내용을 정리했다.
 >
-> [TOC]
->
 > [소스코드 repo](https://github.com/tilsong/TIL/tree/main/thisisjava/thisisjava_mySource)
 
 <br>
