@@ -2,6 +2,8 @@
 >
 > 책을 보면서 내용을 정리했다.
 >
+> [TOC]
+>
 > [소스코드 repo](https://github.com/tilsong/TIL/tree/main/thisisjava/thisisjava_mySource)
 
 <br>
@@ -253,7 +255,146 @@ public class BoundedTypeParameterEx {
 > - 제네릭타입<? extends 상위타입> : Upper Bounded Wildcards(상위 클래스 제한), 타입 파라미터를 대치하는 구체적인 타입으로 상위 타입이나 하위 타입만 올 수 있다.(상위타입-> 하위 타입 가능)
 > - 제네릭타입<? super 하위타입> : Lower Bounded Wildcards(하위 클래스 제한), 타입 파라미터를 대치하는 구체적인 타입으로 하위 타입이나 상위타입이 올 수 있다.(하위 타입 -> 상위 타입 가능)
 
+- 예제 : 수강신청
 
+```java
+//Person, 최상위 클래스
+public class Person {
+	String name;
+	public Person(String name) {
+		this.name = name;
+	};
+	public String getName() {return name;}
+	
+	//이부분이 있어야 registerCourse의 출력값이 정상적으로 나옴. toString이 원래는 뭐였을까?
+    //검색->
+    //Object"클래스가 가진 메소드 중 "toString"메소드가 있습니다.
+	//물론 "Object" 클래스의 모든 메소드는 모든 클래스가 사용이 가능합니다.
+	//"toString" 메서드는 객체가 가지고 있는 정보나 값들을 문자열로 만들어 리턴하는 메소드 입니다.
+    //그래서 이것을 의미 있는 값으로 재정의하여 사용한다!
+	//출처: https://backback.tistory.com/68 [Back Ground]
+	@Override
+	public String toString() {
+		return name;
+	}
+}
+```
+
+```java
+//Person 하위 클래스
+public class Student extends Person{
+	String student;
+	public Student(String student) {
+		super(student);
+	};
+}
+```
+
+```java
+//Student 하위 클래스
+public class HighStudent extends Student{
+	public HighStudent(String highStudent) {
+		super(highStudent);
+	}
+}
+```
+
+```java
+//Person 하위 클래스
+public class Worker extends Person{
+	public Worker(String worker) {
+		super(worker);
+	};
+}
+```
+
+```java
+//제네릭 타입
+public class Course <T>{
+	private String name;
+	private T [] students;
+	
+	public Course(String name, int capacity) {
+		this.name = name;
+		//타입 파라미터로 배열 생성하기
+		students = (T[]) (new Object[capacity]);
+	}
+	
+	public String getName() {return name;}
+    //T[] 리턴 타입 메소드
+	public T[] getStudents() {return students;}
+    
+	public void add(T t) {//빈 배열 인덱스에 수강생 추가하는 메소드
+		for(int i=0; i<students.length; i++) {
+			if(students[i]==null) {
+				students[i]=t;
+				break;
+			}
+		}
+	}
+}
+```
+
+
+
+```java
+//수강생 등록
+import java.util.Arrays;
+public class WildCardEx {
+
+	//double[] values = {1.0, 1.1, 1.2};
+	//System.out.println(values.toString()); // 이렇게 하면 [D@46a49e6 같은 값이 나옵니다.
+	//System.out.println(Arrays.toString(values)); // 이렇게 하면 [1.0, 1.1, 1.2] 이 출력됩니다.
+	//출처: https://crmn.tistory.com/61 [크롬망간이 글 쓰는 공간]
+    //
+    public static void registerCourse( Course<?> course) {
+		System.out.println(course.getName()+" 수강생: "+Arrays.toString(course.getStudents()));
+	}
+	public static void registerCourseStudent(Course<? extends Student> course) {
+		System.out.println(course.getName()+ "수강생: "+ Arrays.toString(course.getStudents()));
+	}
+	public static void registerCourseWorker(Course<? super Worker> course) {
+		System.out.println(course.getName()+ "수강생: "+ Arrays.toString(course.getStudents()));
+	}
+	
+	public static void main(String[] args) {
+        //수강별 등록
+		Course<Person> personCourse = new Course<Person>("일반인 과정", 5);
+			personCourse.add(new Person("일반인"));
+			personCourse.add(new Worker("직장인"));
+			personCourse.add(new Student("학생"));
+			personCourse.add(new HighStudent("고등학생"));
+		Course<Worker> workerCourse = new Course<Worker>("직장인 과정", 5);
+			workerCourse.add(new Worker("직장인"));
+		Course<Student> studentCourse = new Course<Student>("학생 과정", 5);
+			studentCourse.add(new Student("학생"));
+			studentCourse.add(new Student("고등학생"));
+		Course<HighStudent> highStudentCourse = new Course<HighStudent>("고등학생 과정", 5);
+			highStudentCourse.add(new HighStudent("고등학생"));
+		//강의별 와일드카드 범위 따라 출력, 범위 안 맞으면 출력 안됨
+		registerCourse(personCourse);
+		registerCourse(studentCourse);
+		registerCourse(highStudentCourse);
+		registerCourse(workerCourse);
+		System.out.println();
+		
+//		registerCourseStudent(personCourse); 
+		registerCourseStudent(studentCourse);
+		registerCourseStudent(highStudentCourse);
+//		registerCourseStudent(workerCourse);
+		System.out.println();
+		
+		registerCourseWorker(personCourse);
+//		registerCourseWorker(studentCourse);
+//		registerCourseWorker(highStudentCourse);
+		registerCourseWorker(workerCourse);
+		System.out.println();
+		
+		
+	}
+
+}
+```
 
 
 
@@ -265,5 +406,92 @@ public class BoundedTypeParameterEx {
 
 ## 13.7 제네릭 타입의 상속과 구현
 
+- 제네릭도 상속이 가능하다. 또한 자식 제네렉 타입은 추가적으로 타입 파라미터를 가질 수 있다.
+
+```java
+public class Child<T, M, C> extends Parent<T,M>{...}
+```
+
+- 예제 : 제네릭 타입의 상속과 구현
+
+```JAVA
+//부모 제네릭 클래스
+public class Product <T,M>{
+	private T kind;
+	private M model;
+	
+	public T getKind() { return kind;}
+	public M getModel() { return model;}
+	
+	public void setKind(T kind) {this.kind =kind;}
+	public void setModel(M model) {this.model=model;}
+}
+	
+class Tv{}
+```
+
+```java
+//자식 제네릭 클래스
+public class ChildProduct<T,M,C> extends Product<T,M>{
+	private C company;
+	
+	public void setCompany(C company) {this.company=company;}
+	public C getCompany() {return this.company;}
+}
+```
+
+```java
+//제네릭 인터페이스
+public interface Storage<T> {
+	public void add(T item, int index);
+	public T get(int index);
+}
+```
+
+```java
+//제네릭 구현 클래스
+public class StorageImpl<T> implements Storage<T>{
+	private T[] array;
+	
+	public StorageImpl(int capacity) {
+		this.array = (T[])(new Object[capacity]);
+	}
+	@Override
+	public void add(T item, int index) {
+		array[index] = item;
+	}
+	
+	@Override
+	public T get(int index) {
+		return array[index];
+	}
+}
+```
+
+```java
+//제네릭 타입 사용 클래스
+public class ChildEx {
+
+	public static void main(String[] args) {
+		ChildProduct<Tv,String,String> product = new ChildProduct<>();
+		product.setKind(new Tv());
+		product.setModel("Smart TV");
+		product.setCompany("Samsung");
+		
+		Storage<Tv> storage = new StorageImpl<Tv>(100);
+		storage.add(new Tv(), 0);
+		Tv tv = storage.get(0);
+
+	}
+
+}
+```
 
 
+
+
+
+### 참고사이트
+
+-  https://crmn.tistory.com/61 [크롬망간이 글 쓰는 공간]
+-  https://backback.tistory.com/68 [Back Ground]
