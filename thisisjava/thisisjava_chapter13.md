@@ -15,8 +15,60 @@
 > 제네릭은 클래스와 인터페이스, 그리고 메소드를 정의할 때 **타입(type)을 파라미터(parameter)**로 사용할 수 있도록 한다. 타입 파라미터는 코드 작성 시 구체적인 타입으로 대체되어 다양한 코드를 생성하도록 해준다.
 
 - 제네릭의 두 가지 이점
+
   - **컴파일 시 강한 타입 체크**를 할 수 있다. : 실행 시 타입 에러가 나는 것보다는 컴파일을 강하게 체크해서 에러를 사전에 방지한다.
   - **타입 변환(casting)을 제거**한다. : get함수를 통해 저장된 요소를 찾아올 때 타입 변환할 필요가 없다.
+
+  
+
+  > ### 추가 검색: 책 내용과 다른 점
+  >
+  > 책의 내용과는 달리 https://ict-nroo.tistory.com/42 에서 댓글을 보면, 타입변환을 제거할 수 있다는 말은 잘못된 말이라는 내용이 나온다. 바이트 코드 상에서는 형변환이 일어나기 때문이다.
+  >
+  > ---
+  >
+  > "타입변환을 제거할 수 있다."
+  >
+  > 이 부분은 잘못된 정보입니다.
+  >
+  > byte code 뜯어보면 Generic은 java.lang.Object로 서술되어있고 Run time시의 형변환 이나 제네릭을 통한 byte code상의 형변환은 정확히 똑같습니다.
+  >
+  > opcode - checkcast가 발생합니다
+  >
+  > https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.checkcast
+  >
+  > 결론적으로
+  >
+  > List list = new ArrayList();
+  > list.add("hello");
+  > String str = (String) list.get(0);
+  >
+  > List<String> list = new ArrayList<String>();
+  > list.add("hello");
+  > String str = list.get(0);
+  >
+  > 직접 참조 자료형을 형변환 하는 것이나 Generic을 사용하는 것이나
+  > 동일한 byte code로 작성되며 성능이점 또한 없습니다.
+  > 
+  > 
+  >
+  > 출처: https://ict-nroo.tistory.com/42 [개발자의 기록습관]의 댓글 중
+  >
+  > ---
+  >
+  > 추가적으로 
+  >
+  > https://cla9.tistory.com/44 를 보면 어떤 식으로 generic의 타입 변환이 일어나는 지 친절하게 알려주고 있다. 
+  >
+  > 제네릭이 타입변환을 하는 과정에서 <T>에 대한 경계를 지정하지 않으면 역할을 받는 변수의 타입을 명시하지 않을 때 컴파일시 최상위 타입인 Object 타입으로 받아들이거나, 명시했을 때는 컴파일시 해당 타입으로 변경시키는 것이다 . 
+  >
+  > ---
+  >
+  > **결론**
+  >
+  > 다양한 타입을 받을 수 있고, 자동으로 타입변환을 해주는 이점을 가지지만, 제네릭이 타입 변환을 제거하여 프로그램의 성능을 향상시킨다는 말을 옳지 않다고 볼 수 있겠다.
+
+  ​	
 
 <br>
 
@@ -487,9 +539,101 @@ public class ChildEx {
 
 
 
+### 확인문제 
+
+- 예제 4
+
+```JAVA
+//Pair 제네릭 타입
+public class Pair <K,V>{
+	private K key;
+	private V value;
+	
+	//따로 setKey, setValue로 나눌 수도 있고, 일케 생성자로도 가능
+	public Pair(K key, V value) {
+		this.key=key;
+		this.value=value;
+	}
+	public K getKey() { return this.key;}
+	public V getValue() { return this.value;}
+}
+```
+
+```JAVA
+//ChilPair 제네릭 타입(Pair 상속받음)
+public class ChildPair<K,V> extends Pair<K,V>{
+	public ChildPair(K key, V value) {
+		super(key,value);
+	}
+}
+```
+
+```JAVA
+//OtherPair 제네릭 타입
+public class OtherPair<K,V> {
+	private K key;
+	private V value;
+	
+	public OtherPair(K key, V value) {
+		this.key=key;
+		this.value=value;
+	}
+	
+	public K getKey() {return this.key;}
+	public V getValue() {return this.value;}
+	
+}
+```
+
+```JAVA
+//제네릭 메소드
+public class Util {
+	//Pair 사용
+//	public static <K,V> V getValue(Pair<K,V> pair, K key) {
+//		if(pair.getKey()==key) {
+//			return pair.getValue();
+//		} else {
+//			return null;
+//		}
+//	}
+	//ChildPair 사용
+	public static <P extends Pair<K,V>, K, V> V getValue(P pair, K key) {
+		if(pair.getKey()==key) {
+			return pair.getValue();
+		} else {
+			return null;
+		}
+	}
+}
+```
+
+```java
+//제네릭 메소드 호출
+public class UtilEx {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Pair<String, Integer> pair = new Pair<>("홍길동", 35);
+		Integer age = Util.getValue(pair, "홍길동");
+		System.out.println(age);
+		
+		ChildPair<String, Integer> childPair = new ChildPair<>("홍삼원",20);
+		Integer childAge = Util.getValue(childPair, "홍삼순");
+		System.out.println(childAge);
+		
+		/*OtherPair<String,Integer> otherPair = new OtherPair<>("홍삼원", 20);
+		OtherPair는 Pair를 상속하지 않으므로 예외가 발생합니다.
+		int otherAge = Util.getValue(otherPair, "홍삼원");
+		System.out.println(otherAge);*/
+	}
+}
+
+```
+
 
 
 ### 참고사이트
 
 -  https://crmn.tistory.com/61 [크롬망간이 글 쓰는 공간]
 -  https://backback.tistory.com/68 [Back Ground]
+-  https://cla9.tistory.com/44 [북극펭귄]
