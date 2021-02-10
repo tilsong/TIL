@@ -42,4 +42,4 @@
 *  [210210 / public와 private]()
 
 ### servlet&JSP
-* [210209 / Application, Session, Cookie]()
+* [210209 / Application, Session, Cookie](https://github.com/tilsong/TIL/blob/main/servlet%26JSP/Application%2C%20Session%2C%20Cookie.md)
