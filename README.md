@@ -38,8 +38,8 @@
 *  [210124 / 프로그래머스 lv1 나누어 떨어지는 숫자 배열](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20Divide%20Number%20Array.md)
 
 ### 개념
-*  [210127 / Recursive function]()
-*  [210210 / public와 private]()
+*  [210127 / Recursive function](https://github.com/tilsong/TIL/blob/main/concept/Recursive%20function.md)
+*  [210210 / public와 private](https://github.com/tilsong/TIL/blob/main/concept/public%EC%99%80%20private.md)
 
 ### servlet&JSP
 * [210209 / Application, Session, Cookie](https://github.com/tilsong/TIL/blob/main/servlet%26JSP/Application%2C%20Session%2C%20Cookie.md)
