@@ -37,6 +37,9 @@
 *  [210121 / 프로그래머스 lv1 문자열 다루기 기본](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20String%20Control.md)
 *  [210124 / 프로그래머스 lv1 나누어 떨어지는 숫자 배열](https://github.com/tilsong/TIL/blob/main/algorithm/practice/programmers%20lv1%20Divide%20Number%20Array.md)
 
-### 정리
-*  [210127 / Recursive function](https://github.com/tilsong/TIL/blob/main/myInfo/Recursive%20function.md)
- 
+### 개념
+*  [210127 / Recursive function]()
+*  [210210 / public와 private]()
+
+### servlet&JSP
+* [210209 / Application, Session, Cookie]()
